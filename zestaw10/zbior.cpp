@@ -2,22 +2,24 @@
 #include <vector>
 using namespace std;
 
-// template <typename T>
-// class Visitor
-// {
-// public:
-//     virtual void Visit(T &element) = 0;
-//     virtual bool IsDone() const { return false; }
-// };
+template <typename T>
+class Visitor
+{
+public:
+    virtual void Visit(T &element) = 0;
+    virtual bool IsDone() const { return false; }
+};
 
-// class AddingVisitor : public Visitor<int>
-// {
-// public:
-//     int sum;
-//     void Visit(int &element);
-// };
+class AddingVisitor : public Visitor<int>
+{
+    int sum;
 
-// template <typename T>
+public:
+    void Visit(int &element);
+    int suma();
+};
+
+template <typename T>
 class Container
 {
 public:
@@ -26,11 +28,11 @@ public:
     virtual bool IsEmpty() const { return Count() == 0; };
     virtual bool IsFull() const = 0;
     virtual void MakeNull() = 0;
-    // virtual void Accept(Visitor<T> &v) = 0;
+    virtual void Accept(Visitor<T> &v) const = 0;
 };
 
 template <typename T>
-class Set : public virtual Container
+class Set : public virtual Container<T>
 {
 protected:
     int count;
@@ -63,14 +65,14 @@ public:
     void Withdraw(int element);
     void Wypisz();
 
+    void Accept(Visitor<int> &v) const;
+
     // friend- funkcja uzyska prawo dostepu do prywatnych elementów danej klasy.
     friend SetAsArray operator+(SetAsArray const &, SetAsArray const &);
     friend SetAsArray operator-(SetAsArray const &, SetAsArray const &);
     friend SetAsArray operator*(SetAsArray const &, SetAsArray const &);
     friend bool operator==(SetAsArray const &, SetAsArray const &);
     friend bool operator<=(SetAsArray const &, SetAsArray const &);
-
-    // void Accept(Visitor &) const;
 };
 
 SetAsArray::SetAsArray(unsigned int n) : Set(n)
@@ -213,21 +215,28 @@ bool operator<=(SetAsArray const &s1, SetAsArray const &s2)
     return true;
 }
 
-// void SetAsArray::Accept(Visitor &v) const
-// {
-//     for (int i = 0; i < universeSize; i++)
-//     {
-//         if (array[i])
-//         {
-//             v.Visit(i);
-//         }
-//     }
-// }
+void SetAsArray::Accept(Visitor<int> &v) const
+{
+    for (int i = 0; i < universeSize; i++)
+    {
+        if (array[i])
+        {
+            v.Visit(i);
+        }
+    }
+}
 
-// void AddingVisitor::Visit(int &element)
-// {
-//     sum += element;
-// }
+void AddingVisitor::Visit(int &element)
+{
+    sum += element;
+}
+
+int AddingVisitor::suma()
+{
+    int tmp = sum;
+    sum = 0;
+    return tmp;
+}
 
 int main()
 {
@@ -267,10 +276,23 @@ int main()
     cout << (D == A) << endl;
     cout << (D <= A) << endl;
 
+
+    // cout<<"\nNowa czesc"<<endl;
     // A.Insert(5);
+
     // AddingVisitor v_A;
     // A.Accept(v_A);
-    // cout << v_A.sum << endl;
+    // cout << v_A.suma() << endl;
+
+    // SetAsArray E = SetAsArray(10);
+    // E = A * B;
+    // AddingVisitor v_E;
+    // E.Accept(v_E);
+    // cout << v_E.suma() << endl;
+
+    // E.Withdraw(1);
+    // E.Accept(v_E);
+    // cout << v_E.suma() << endl;
 
     return 0;
 }
