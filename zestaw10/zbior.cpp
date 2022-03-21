@@ -270,29 +270,27 @@ int main()
     cout << (C == B) << endl;
     cout << (B <= C) << endl;
 
-    cout << endl;
-
     A.Insert(1);
     cout << (D == A) << endl;
     cout << (D <= A) << endl;
 
+    cout << "\nNowa czesc" << endl;
+    A.Insert(5);
 
-    // cout<<"\nNowa czesc"<<endl;
-    // A.Insert(5);
+    AddingVisitor v_A;
+    A.Accept(v_A);
+    cout << v_A.suma() << endl;
 
-    // AddingVisitor v_A;
-    // A.Accept(v_A);
-    // cout << v_A.suma() << endl;
+    SetAsArray E = SetAsArray(10);
+    E = A * B;
 
-    // SetAsArray E = SetAsArray(10);
-    // E = A * B;
-    // AddingVisitor v_E;
-    // E.Accept(v_E);
-    // cout << v_E.suma() << endl;
+    AddingVisitor v_E;
+    E.Accept(v_E);
+    cout << v_E.suma() << endl;
 
-    // E.Withdraw(1);
-    // E.Accept(v_E);
-    // cout << v_E.suma() << endl;
+    E.Withdraw(1);
+    E.Accept(v_E);
+    cout << v_E.suma() << endl;
 
     return 0;
 }

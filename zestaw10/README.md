@@ -63,3 +63,9 @@ Zawieranie zbiorów, zwraca prawdę, gdy pierwszy zbiór zawiera się w drugim.
 
 ----------
 <br>
+
+## **Polecenie v2**
+Stworzyć klasę `AddingVisitor` – wizytatora, który oblicza sumę elementów zbioru.
+* Tworzymy klasę `AddingVisitor` dziedziczącą z klasy `Visitor`. W klasie mamy pole(np. `sum`) w którym pamiętamy policzona sumę. Metoda `AddingVisitor.visit(i)` zwieksza wartość tego pola `sum` o `i`. 
+* Implementujemy metodę `Accept` dla klasy `SetAsArray` (przegląda wszystkie elementy zbioru wywołując `v.visit()`.(„skacze” po komórkach tablicy w których jest wartość `true`) 
+
