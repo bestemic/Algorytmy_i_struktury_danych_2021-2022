@@ -69,3 +69,27 @@ Stworzyć klasę `AddingVisitor` – wizytatora, który oblicza sumę elementów
 * Tworzymy klasę `AddingVisitor` dziedziczącą z klasy `Visitor`. W klasie mamy pole(np. `sum`) w którym pamiętamy policzona sumę. Metoda `AddingVisitor.visit(i)` zwieksza wartość tego pola `sum` o `i`. 
 * Implementujemy metodę `Accept` dla klasy `SetAsArray` (przegląda wszystkie elementy zbioru wywołując `v.visit()`.(„skacze” po komórkach tablicy w których jest wartość `true`) 
 
+----------
+<br>
+
+## **Polecenie v3**
+1. Proszę stworzyć klasę `OddVisitor` – wizytatora, który sprawdza, czy w zbiorze jest liczba nieparzysta ( w polu `OddVisitor` np. `odd` pamiętamy `true` lub `false`). 
+    * Proszę nadpisać metodę `IsDone` wizytatora, żeby zwracała `true` po znalezieniu pierwszej liczby nieparzystej. 
+    * Proszę zmodyfikować metodę `Accept`, żeby uwzględniała metodę `isDone` (`Accept` nie przegląda całego zbioru, tylko zatrzymuje się po pierwszym znalezionym elemencie nieparzystym.) 
+
+    * Proszę rozszerzyć test, dodając:
+        * Sprawdzenie czy w zbiorze `B` jest liczba nieparzysta (korzystając z wizytatora)
+        * Sprawdzenie czy w zbiorze `A` jest liczba nieparzysta (korzystając z wizytatora)
+        * Usuń wartość `1` z `A`
+        * Usuń wartość `5` z `A`
+        * Sprawdzenie czy w zbiorze `A` jest liczba nieparzysta (korzystając z wizytatora)
+        * Proszę na potrzeby sprawdzenia, czy działa `IsDone`, wypisać na której komórce funkcja `Accept` zakończyła przeglądanie 
+
+3. Proszę zaimplementować klasę `Iter` dla zbioru.
+
+    * Proszę rozszerzyć test:
+        * Wypisując elementy zbioru `A` korzystając z iteratora
+        * Wypisując elementy zbioru `B` korzystając z iteratora 
+
+----------
+<br>
