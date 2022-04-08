@@ -411,8 +411,6 @@ int main()
     cout << v_E.suma() << endl;
 
     cout << "\nKolejna czesc" << endl;
-    A.Wypisz();
-    B.Wypisz();
     OddVisitor o_B;
     B.Accept(o_B);
     cout << o_B.IsDone() << endl;
