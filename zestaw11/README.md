@@ -67,12 +67,33 @@ Zwraca `true` jeśli graf zawiera krawędź łączącą podane wierzchołki.
 <br>
 Zwraca wskaźnik do krawędzi łączącej podane wierzchołki.
 
+12. `EmantingEdges`
+<br>
+Jako argment bierze bierzchołek grafu. Zwraca iterator przeglądający wszystkie krawędzie wchodzące do podanego wierzchołka.
+
+13. `IncidentEdges`
+<br>
+Zwraca iterator przeglądający wszystkie krawędzie wchodzące do podanego wierzchołka.
+
 ### Uwagi dodatkowe:
 1. Konstruktor `GraphAsMatrix(bool b, int n)`:
     * Ustawia pole `isDrected` na `b`
     * Ustawia pole `numberOfVertices` na `n`
     * Tworzy `n` wierzchołków i wstawia wskaźniki na wierzchołki do wektora `vertices`
     * Tworzy macierz `adjacencyMatrix` o rozmiarze `n*n` i wypełnia wartościami `NULL` (bo jeszcze nie mamy żadnych krawędzi)
+
+2. `class AllVerticesIter`:
+    * konstruktor tworzy kopię potrzebnych danych, ustawia `current` na `0`
+    * `isDone()` zwraca prawdę, gdy przejżymy wszystkie wierzchołki
+    * `operator*()` zwraca zawartość bieżącej komórki tablicy wierzchołków
+    * `operator++()` zwiększa wartość pola `current`
+
+3. `class AllEdgesIter`:
+    * chcemy przejrzeć wszystkie krawędzie w grafie – wszystkie komórki tablicy kwadratowej. Przeglądamy je np. wiersz po wierszu.
+    * Pamiętamy w polach klasy `row` i `col` numer wiersza i kolumny (bieżące).
+    * Dodatkowa funkcja `next` znajduje następne `row` i `col`, takie, że `adjacencyMatrix[row][col]!=NULL`.
+    * Funkcja `next` wykorzystana w `operator++()`
+    * Konstruktor klasy inicjalizuje odpowiednio `row` i `col`. Następnie woła funkcję `next`, która znajduje pierwsze `row` i `col` takie, że `adjacencyMatrix[row][col]!=NULL`
 
 ----------
 <br>
