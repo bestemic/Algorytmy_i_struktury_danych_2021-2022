@@ -217,6 +217,7 @@ void GraphAsMatrix::AddEdge(int u, int v)
             numberOfEdges++;
             adjacencyMatrix[u][v] = edge;
 
+            edge = new Edge(vertices[v], vertices[u]);
             if (!isDirected)
             {
                 adjacencyMatrix[v][u] = edge;
@@ -581,7 +582,7 @@ int main()
     cout << endl;
     cout << "Iterator po krawędziach graf 2" << endl;
 
-    e_it = graf1.EdgesIter();
+    e_it = graf2.EdgesIter();
     while (!e_it.IsDone())
     {
         cout << "Krawedz: " << (*e_it).V0()->Number() << " ------ " << (*e_it).V1()->Number() << endl;
@@ -603,7 +604,7 @@ int main()
     cout << endl;
     cout << "Iterator po krawędziach wychodzących graf 2" << endl;
 
-    e_it = graf1.EmanatingEdgesIter(3);
+    e_it = graf2.EmanatingEdgesIter(3);
     while (!e_it.IsDone())
     {
         cout << "Krawedz: " << (*e_it).V0()->Number() << " ------ " << (*e_it).V1()->Number() << endl;
@@ -625,7 +626,7 @@ int main()
     cout << endl;
     cout << "Iterator po krawędziach wchodzących graf 2" << endl;
 
-    e_it = graf1.IncidentEdgesIter(2);
+    e_it = graf2.IncidentEdgesIter(2);
     while (!e_it.IsDone())
     {
         cout << "Krawedz: " << (*e_it).V0()->Number() << " ------ " << (*e_it).V1()->Number() << endl;
