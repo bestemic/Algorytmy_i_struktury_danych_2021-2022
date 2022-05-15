@@ -75,6 +75,26 @@ Jako argment bierze bierzchołek grafu. Zwraca iterator przeglądający wszystki
 <br>
 Zwraca iterator przeglądający wszystkie krawędzie wchodzące do podanego wierzchołka.
 
+14. `void DFS(Vertex *v)`
+<br>
+Główna metoda przeglądania DFS. Wywołuje `DFS1`
+
+15. `void DFS1(Vertex *v, std::vector<bool> &visited)`
+
+16. Wizytator
+<br>
+Proszę zaimplementować wizytatora, który umożliwi zliczenie, ile wierzchołków zostało odwiedzonych algorytmem DFS.
+Tzn. Metoda `Visit` wizytatora zwiększa licznik o `1`.
+
+17. `void DFS_visitor (CountingVisitor *visitor, Vertex *v, std::vector<bool> &visited)`
+<br>
+Proszę zmodyfikować metodę `DFS1`, aby wpuszczała wizytatora i zamiast wypisywania wołała metodę `Visit` wizytatora.
+
+18. `IsConnected`
+<br>
+Proszę zaimplementować metodę IsConnected, sprawdzającą, czy graf jest spójny (zwraca prawdę, gdy przeglądając graf algorytmem DFS przejrzymy wszystkie wierzchołki, czyli nasz wizytator „zliczy” wszystkie wierzchołki).
+
+
 ### Uwagi dodatkowe:
 1. Konstruktor `GraphAsMatrix(bool b, int n)`:
     * Ustawia pole `isDrected` na `b`

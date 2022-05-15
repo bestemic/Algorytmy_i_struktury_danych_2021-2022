@@ -38,6 +38,23 @@ public:
     virtual void operator++() = 0;
 };
 
+template <typename T>
+class Visitor
+{
+public:
+    virtual void Visit(T *element) = 0;
+    virtual bool IsDone() const { return false; }
+};
+
+class CountingVisitor : public Visitor<Vertex>
+{
+    int sum = 0;
+
+public:
+    void Visit(Vertex *element);
+    int suma();
+};
+
 class GraphAsMatrix
 {
     vector<Vertex *> vertices;
@@ -62,6 +79,7 @@ class GraphAsMatrix
         GraphAsMatrix &owner;
         int row;
         int col;
+        bool firstIter;
 
     public:
         void next();
@@ -75,6 +93,7 @@ class GraphAsMatrix
         GraphAsMatrix &owner;
         int row;
         int col;
+        bool firstIter;
 
     public:
         void next();
@@ -88,6 +107,7 @@ class GraphAsMatrix
         GraphAsMatrix &owner;
         int row;
         int col;
+        bool firstIter;
 
     public:
         void next();
@@ -107,6 +127,10 @@ public:
     void AddEdge(int u, int v);
     Edge *SelectEdge(int u, int v);
     Vertex *SelectVertex(int v);
+    void DFS(Vertex *v);
+    void DFS1(Vertex *v, vector<bool> &visited);
+    void DFS_visitor(CountingVisitor *visitor, Vertex *v, std::vector<bool> &visited);
+    bool IsConnected();
 
     Iterator<Vertex> &VerticesIter();
     Iterator<Edge> &EdgesIter();
@@ -142,6 +166,19 @@ Vertex *Edge::Mate(Vertex *v)
     {
         return v0;
     }
+}
+
+// CountingVisitor implementation
+void CountingVisitor::Visit(Vertex *element)
+{
+    sum++;
+}
+
+int CountingVisitor::suma()
+{
+    int tmp = sum;
+    sum = 0;
+    return tmp;
 }
 
 // GraphAsMatrix implementation
@@ -242,6 +279,89 @@ Vertex *GraphAsMatrix::SelectVertex(int v)
     }
 }
 
+void GraphAsMatrix::DFS(Vertex *v)
+{
+    vector<bool> visited(numberOfVertices, false);
+    DFS1(v, visited);
+
+    for (int i = 0; i < numberOfVertices; i++)
+    {
+        if (visited[i] == false)
+        {
+            DFS1(SelectVertex(i), visited);
+        }
+    }
+}
+
+void GraphAsMatrix::DFS1(Vertex *v, vector<bool> &visited)
+{
+    int vertex = v->Number();
+    visited[vertex] = true;
+    cout << "Odwiedzam wierzchołek: " << vertex << endl;
+
+    Iterator<Edge> &iterator = EmanatingEdgesIter(vertex);
+    while (!iterator.IsDone())
+    {
+        Vertex *x = (*iterator).V1();
+        if (visited[x->Number()] == false)
+        {
+            DFS1(x, visited);
+        }
+        ++iterator;
+    }
+    delete &iterator;
+}
+
+void GraphAsMatrix::DFS_visitor(CountingVisitor *visitor, Vertex *v, std::vector<bool> &visited)
+{
+    int vertex = v->Number();
+    visited[vertex] = true;
+    visitor->Visit(v);
+
+    Iterator<Edge> &iterator = EmanatingEdgesIter(vertex);
+    while (!iterator.IsDone())
+    {
+        Vertex *x = (*iterator).V1();
+        if (visited[x->Number()] == false)
+        {
+            DFS_visitor(visitor, x, visited);
+        }
+        ++iterator;
+    }
+    delete &iterator;
+}
+
+bool GraphAsMatrix::IsConnected()
+{
+    CountingVisitor *visitor = new CountingVisitor;
+    if (IsDirected())
+    {
+        for (int i = 0; i < NumberOfVertices(); i++)
+        {
+            vector<bool> visited(numberOfVertices, false);
+            DFS_visitor(visitor, SelectVertex(i), visited);
+            if (visitor->suma() != NumberOfVertices())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    else
+    {
+        vector<bool> visited(numberOfVertices, false);
+        DFS_visitor(visitor, SelectVertex(0), visited);
+        if (visitor->suma() == NumberOfVertices())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
 Iterator<Vertex> &GraphAsMatrix::VerticesIter()
 {
     return *new AllVerticesIter(*this);
@@ -288,6 +408,7 @@ GraphAsMatrix::AllEdgesIter::AllEdgesIter(GraphAsMatrix &owner) : owner(owner)
 {
     row = 0;
     col = 0;
+    firstIter = true;
     next();
 }
 
@@ -314,16 +435,17 @@ void GraphAsMatrix::AllEdgesIter::next()
     while (true)
     {
 
-        if (row == 0 && col == 0)
+        if (row == 0 && col == 0 && firstIter)
         {
             if (owner.adjacencyMatrix[row][col] != NULL)
             {
+                firstIter = false;
                 break;
             }
         }
-        if (row == 9 && col == 9)
+        if (row == owner.NumberOfVertices() - 1 && col == owner.NumberOfVertices() - 1)
         {
-            row = 10;
+            row = owner.NumberOfVertices();
             break;
         }
 
@@ -356,6 +478,7 @@ GraphAsMatrix::EmanEdgesIter::EmanEdgesIter(GraphAsMatrix &owner, int v) : owner
 {
     row = v;
     col = 0;
+    firstIter = true;
     next();
 }
 
@@ -380,16 +503,18 @@ void GraphAsMatrix::EmanEdgesIter::next()
 {
     while (true)
     {
-        if (col == 0)
+        if (col == 0 && firstIter)
         {
             if (owner.adjacencyMatrix[row][col] != NULL)
             {
+                firstIter = false;
                 break;
             }
         }
-        if (col == 9)
+
+        if (col == owner.NumberOfVertices() - 1)
         {
-            col = 10;
+            col = owner.NumberOfVertices();
             break;
         }
 
@@ -407,6 +532,7 @@ GraphAsMatrix::InciEdgesIter::InciEdgesIter(GraphAsMatrix &owner, int v) : owner
 {
     row = 0;
     col = v;
+    firstIter = true;
     next();
 }
 
@@ -431,16 +557,17 @@ void GraphAsMatrix::InciEdgesIter::next()
 {
     while (true)
     {
-        if (row == 0)
+        if (row == 0 && firstIter)
         {
             if (owner.adjacencyMatrix[row][col] != NULL)
             {
+                firstIter = false;
                 break;
             }
         }
-        if (row == 9)
+        if (row == owner.NumberOfVertices() - 1)
         {
-            row = 10;
+            row = owner.NumberOfVertices();
             break;
         }
 
@@ -633,6 +760,81 @@ int main()
         ++e_it;
     }
     delete &e_it;
+
+    // DFS
+
+    cout << endl;
+
+    GraphAsMatrix *graph = new GraphAsMatrix(10, false);
+    graph->AddEdge(0, 1);
+    graph->AddEdge(1, 2);
+    graph->AddEdge(2, 3);
+    graph->AddEdge(3, 4);
+    graph->AddEdge(3, 7);
+    graph->AddEdge(4, 5);
+    graph->AddEdge(5, 9);
+    graph->AddEdge(9, 9);
+    graph->AddEdge(6, 8);
+    graph->AddEdge(8, 6);
+    graph->AddEdge(0, 8);
+    graph->DFS(graph->SelectVertex(0));
+    delete graph;
+
+    cout << endl;
+
+    graph = new GraphAsMatrix(10, true);
+    graph->AddEdge(0, 1);
+    graph->AddEdge(1, 2);
+    graph->AddEdge(2, 3);
+    graph->AddEdge(3, 4);
+    graph->AddEdge(3, 7);
+    graph->AddEdge(4, 5);
+    graph->AddEdge(5, 9);
+    graph->AddEdge(9, 9);
+    graph->AddEdge(6, 8);
+    graph->AddEdge(8, 6);
+    graph->AddEdge(0, 8);
+    graph->DFS(graph->SelectVertex(0));
+    delete graph;
+
+    cout << endl;
+
+    graph = new GraphAsMatrix(10, false);
+    graph->AddEdge(0, 1);
+    graph->AddEdge(1, 2);
+    graph->AddEdge(2, 3);
+    graph->AddEdge(3, 4);
+    graph->AddEdge(3, 7);
+    graph->AddEdge(4, 5);
+    graph->AddEdge(5, 9);
+    graph->AddEdge(9, 9);
+    graph->AddEdge(6, 8);
+    graph->AddEdge(8, 6);
+    graph->AddEdge(0, 8);
+    cout << "graf jest spojny=" << graph->IsConnected() << endl;
+    graph->AddEdge(0, 8);
+    cout << "graf jest spojny=" << graph->IsConnected() << endl;
+    delete graph;
+
+    cout << endl;
+
+    graph = new GraphAsMatrix(10, true);
+    graph->AddEdge(0, 1);
+    graph->AddEdge(1, 2);
+    graph->AddEdge(2, 3);
+    graph->AddEdge(3, 4);
+    graph->AddEdge(3, 7);
+    graph->AddEdge(4, 5);
+    graph->AddEdge(5, 9);
+    graph->AddEdge(9, 9);
+    graph->AddEdge(6, 8);
+    graph->AddEdge(8, 6);
+    graph->AddEdge(0, 8);
+    graph->AddEdge(6, 0);
+    graph->AddEdge(9, 0);
+    cout << "graf jest spojny=" << graph->IsConnected() << endl;
+    graph->AddEdge(7, 0);
+    cout << "graf jest spojny=" << graph->IsConnected() << endl;
 
     return 0;
 }
