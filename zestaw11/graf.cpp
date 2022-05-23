@@ -131,6 +131,8 @@ public:
     void DFS1(Vertex *v, vector<bool> &visited);
     void DFS_visitor(CountingVisitor *visitor, Vertex *v, std::vector<bool> &visited);
     bool IsConnected();
+    void DFS_Spanning_Tree(Vertex *v);
+    void DFS_Spanning_Tree_1(Vertex *v, vector<bool> &visited, vector<int> &parent);
 
     Iterator<Vertex> &VerticesIter();
     Iterator<Edge> &EdgesIter();
@@ -306,6 +308,39 @@ void GraphAsMatrix::DFS1(Vertex *v, vector<bool> &visited)
         if (visited[x->Number()] == false)
         {
             DFS1(x, visited);
+        }
+        ++iterator;
+    }
+    delete &iterator;
+}
+
+void GraphAsMatrix::DFS_Spanning_Tree(Vertex *v)
+{
+    if (!IsConnected())
+    {
+        cout << "Nie jest spójny";
+        abort();
+    }
+
+    vector<bool> visited(numberOfVertices, false);
+    vector<int> parent(numberOfVertices, -1);
+    DFS_Spanning_Tree_1(v, visited, parent);
+}
+
+void GraphAsMatrix::DFS_Spanning_Tree_1(Vertex *v, vector<bool> &visited, vector<int> &parent)
+{
+    int vertex = v->Number();
+    visited[vertex] = true;
+
+    Iterator<Edge> &iterator = EmanatingEdgesIter(vertex);
+    while (!iterator.IsDone())
+    {
+        Vertex *u = (*iterator).V1();
+        if (visited[u->Number()] == false)
+        {
+            parent[u->Number()] = vertex;
+            cout << "Rodzicem " << u->Number() << " jest " << vertex << endl;
+            DFS_Spanning_Tree_1(u, visited, parent);
         }
         ++iterator;
     }
@@ -835,6 +870,30 @@ int main()
     cout << "graf jest spojny=" << graph->IsConnected() << endl;
     graph->AddEdge(7, 0);
     cout << "graf jest spojny=" << graph->IsConnected() << endl;
+
+    cout << endl;
+    cout << "DRZEWO ROZPINAJĄCE" << endl;
+
+    graph = new GraphAsMatrix(10, false);
+    graph->AddEdge(0, 1);
+    graph->AddEdge(1, 2);
+    graph->AddEdge(2, 3);
+    graph->AddEdge(3, 4);
+    graph->AddEdge(3, 7);
+    graph->AddEdge(4, 5);
+    graph->AddEdge(5, 9);
+    graph->AddEdge(9, 9);
+    graph->AddEdge(6, 8);
+    graph->AddEdge(8, 6);
+    graph->AddEdge(0, 8);
+
+    graph->DFS_Spanning_Tree(graph->SelectVertex(0));
+    cout << endl;
+
+    graph->AddEdge(3, 9);
+    graph->AddEdge(5, 7);
+    graph->AddEdge(9, 8);
+    graph->DFS_Spanning_Tree(graph->SelectVertex(0));
 
     return 0;
 }

@@ -17,6 +17,7 @@ public class App {
         for (int i = 0; i < vaultsNumber; i++) {
             graph.addEdge(i, scanner.nextInt() - 1);
         }
+        scanner.close();
         return graph;
     }
 

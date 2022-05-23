@@ -94,6 +94,14 @@ Proszę zmodyfikować metodę `DFS1`, aby wpuszczała wizytatora i zamiast wypis
 <br>
 Proszę zaimplementować metodę IsConnected, sprawdzającą, czy graf jest spójny (zwraca prawdę, gdy przeglądając graf algorytmem DFS przejrzymy wszystkie wierzchołki, czyli nasz wizytator „zliczy” wszystkie wierzchołki).
 
+19. `void DFS_Spanning_Tree(Vertex * v)`
+<br>
+Sprawdź czy graf jest spójny, następnie zaznacz wszystkie wierzchołki jako nieodwiedzone oraz zaznacz brak rodzica. Wywołaj `DFS_Spanning_Tree_1(v, visited, parent)`
+
+20. `void DFS_Spanning_Tree_1(Vertex *v, vector<bool> & visited, vector<int> & parent )`
+<br>
+Oznacz wierzchołek jako odwiedzony. Dla sąsiadów wirzchołka sprawdź czy były odwiedzone, jeśli nie to przypisz rodzica i wywołaj rekurancyjnie `DFS_Spanning_Tree_1`
+
 
 ### Uwagi dodatkowe:
 1. Konstruktor `GraphAsMatrix(bool b, int n)`:
